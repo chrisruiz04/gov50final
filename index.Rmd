@@ -1,6 +1,6 @@
 ---
 title: "Gov 50 Final Project"
-author: "Your Name Here"
+author: "Chris Ruiz"
 description: "My final project"
 output:
   distill::distill_article:
@@ -11,4 +11,13 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring data related to...
+I am interested in exploring data related to education. I volunteer at the Cambridge After School Program near Alewife and would love to see if I can collect data through surveys of the students about their thoughts on the effectiveness of the program, or really anything related to education. I don't really know how this will manifest itself, but its a good place to start and I'm excited to brainstorm!
+
+
+The dataset that I will be using is called School Attendance by Student Group and District, 2021-2022. It is from data.gov. The dataset takes into account schools in the state of Connecticut (public and private) and also stores factors like race, homelessness, income level, whether or not students are on free-reduced lunch programs, school district, and attendance rates between 2019 and 2022. The general question I would like to answer is did COVID-19 impact the attendance rates of low income students and minority students, and if so, by how much, and also if so, did students of color have consistently lower attendance rates than their white counterparts? I hypothesize that COVID disproportionately impacted poorer students and students of color and that their attendance rates in the state of Connecticut will be lower across the board. I have read many articles that claim that COVID impacted the minority workforce disproportionately, so I believe that my hypothesis is rooted in logic and theory. Although I can't establish causation, I think that this may be true because students in lower income districts had worse access to vaccines, more exposure to the virus, and less school resources to contain the spread of the virus, in turn lowering their attendance rates compared to wealthier, whiter districts. The variables I plan to use are percentage of non white students, percentage of white students, attendance rates in 2019, attendance rates in 2020, attendance rates in 2021, as well as the other factors like homelessness, income, and need. If all goes well, I will establish a negative correlation between non white percentage and attendance rates. This will be measured with a correlation coefficient from -1 to 1. My hypothesis would be proven if the data, when plotted, showed a negative trend between minorities and high attendance rates. My hypothesis would be disproven if attendance rates between 2019 and 2021 were consistent, and also if attendance rates between non whites and whites were consistent. I am excited to get into the data and see what I can find!
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
