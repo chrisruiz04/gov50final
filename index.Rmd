@@ -11,25 +11,14 @@ output:
 
 ## Project thoughts
 
-MILESTONE 1: 
+1. Introduction: I am Christopher Ruiz, and I study government at Harvard College. I am also very interested in education. For my project, I wanted to see if there was a relationship between students' race and their school attendance rates during the COVID-19 pandemic. There is evidence that links race to COVID mortality rates, so I am curious to see if the disease also impacted students of color differently than their white counterparts in the same districts. My hypothesis is that COVID-19 is not colorblind and that students of color had lower attendance rates than white students after the beginning of the pandemic.
 
-I am interested in exploring data related to education. I volunteer at the Cambridge After School Program near Alewife and would love to see if I can collect data through surveys of the students about their thoughts on the effectiveness of the program, or really anything related to education. I don't really know how this will manifest itself, but its a good place to start and I'm excited to brainstorm!
-
-
-MILESTONE 2:
-The dataset that I will be using is called School Attendance by Student Group and District, 2021-2022. It is from data.gov. The dataset takes into account schools in the state of Connecticut (public and private) and also stores factors like race, homelessness, income level, whether or not students are on free-reduced lunch programs, school district, and attendance rates between 2019 and 2022. The general question I would like to answer is did COVID-19 impact the attendance rates of low income students and minority students, and if so, by how much, and also if so, did students of color have consistently lower attendance rates than their white counterparts? I hypothesize that COVID disproportionately impacted poorer students and students of color and that their attendance rates in the state of Connecticut will be lower across the board. I have read many articles that claim that COVID impacted the minority workforce disproportionately, so I believe that my hypothesis is rooted in logic and theory. Although I can't establish causation, I think that this may be true because students in lower income districts had worse access to vaccines, more exposure to the virus, and less school resources to contain the spread of the virus, in turn lowering their attendance rates compared to wealthier, whiter districts. The variables I plan to use are percentage of non white students, percentage of white students, attendance rates in 2019, attendance rates in 2020, attendance rates in 2021, as well as the other factors like homelessness, income, and need. If all goes well, I will establish a negative correlation between non white percentage and attendance rates. This will be measured with a correlation coefficient from -1 to 1. My hypothesis would be proven if the data, when plotted, showed a negative trend between minorities and high attendance rates. My hypothesis would be disproven if attendance rates between 2019 and 2021 were consistent, and also if attendance rates between non whites and whites were consistent. I am excited to get into the data and see what I can find!
-
-MILESTONE 3: 
-
-In this milestone, I was interested in overall attendance rates among Black and White students. I chose 2022 for this first visualization, but plan to analyze attendance impact over all 3 years that the dataset allows. It is clear that in the following graphs, black attendance rates are lower than white attendance rates across the board.
-
-MILESTONE 4: 
-
-By analyzing the attendance distributions below, there is evidence that Black and Latino students, over all Connecticut school districts, had lower attendance rates in the 2020-2021 school year. I plan to analyze a connection between COVID-19 and attendance rates to compare attendance rates both before and after COVID-19. However, with the data visualizations below, I can estimate that the mean attendance in 2021 for White students is a couple percentage points higher than their Latino and Black counterparts. I also plan to see how homelessness impacted attendance rates, but for right now, the data supports my hypothesis that COVID-19 is not colorblind and impacts communities of color differently. 
+2. Data Source and First Visualization: I chose a CSV file from data.gov. This is government data from Connecticut school districts that stores attendance rates between 2019 and 2022. In addition, the data is divided into certain socioeconomic groups, like students receiving free and reduced lunch, homeless students, and the racial geography within a given school district. This is a cross-sectional research design over the course of 3 years. Admittedly, this dataset is poorly compiled (I will elaborate shortly). Luckily, I was still able to render data visualizations and a regression, although if I worked for the US government, I would have compiled the data differently. Here is what I mean:
 
 ```{r, echo = FALSE}
 library(tidyverse)
 library(dplyr)
+library(knitr)
 
 attendance <- read_csv("~/Downloads/attendance.csv", skip = 1)
 
@@ -37,12 +26,68 @@ new_names <- c("code", "district", "category", "group", "student", "att22", "rat
 
 colnames(attendance) <- new_names
 
-print(colnames(attendance))
+first_5 <- attendance |>
+  slice(1:10)
+kable(first_5, digits = 2)
 
-attendance
+```
+
+The “category” column stores data for all of the variables of interest. These include free and reduced lunch, homelessness, English learners, disabilities, high needs, and race. The “group” column corresponds to “category.” For example, “Black or African American” corresponds with “Race/Ethnicity.” The problem with this method of data collection is that it must be filtered within “group” rather than having the data pre-filtered. Nonetheless, I was able to write code that fixed this problem. Here is a visual representation of the attendance rates in the 2019-20, 2020-21, and 2021-22 school years:
+
+```{r, echo = FALSE}
+attendance_20 <- attendance |>
+  filter(group == "All Students", na.rm = TRUE) |>
+  select(att20) |>
+  ggplot(mapping = aes(x = att20)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2019-20 School Year (pct)", y = " ", title = "Attendance Distribution in Connecticut Schools 2019-20")
+
+ attendance_21 <- attendance |>
+  filter(group == "All Students", na.rm = TRUE) |>
+  select(att21) |>
+  ggplot(mapping = aes(x = att21)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2020-21 School Year (pct)", y = " ", title = "Attendance Distribution in Connecticut Schools 2020-21")
+ 
+ attendance_22 <- attendance |>
+  filter(group == "All Students", na.rm = TRUE) |>
+  select(att22) |>
+  ggplot(mapping = aes(x = att22)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2021-22 School Year (pct)", y = " ", title = "Attendance Distribution in Connecticut Schools 2021-22")
 ```
 
 ```{r, echo = FALSE}
+attendance_20
+attendance_21
+attendance_22
+```
+
+3. Main relation of interest: Now that we understand how to visualize attendance rates across 3 school years, we can study how attendance rates might be influenced by race. Below are the same 3 school years, but filtered into White students, Hispanic/Latino students, and Black/African-American students:
+
+```{r, echo = FALSE}
+
+white_attendance_20 <- attendance |>
+  filter(group == "White", category == "Race/Ethnicity") |>
+  select(att20) |>
+  ggplot(mapping = aes(x = att20)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2019-20 School Year", y = "Count", title = "White Attendance in Connecticut Schools 2019-20")
+
+ black_attendance_20 <- attendance |>
+  filter(group == "Black or African American", category == "Race/Ethnicity") |>
+  select(att20) |>
+  ggplot(mapping = aes(x = att20)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2019-20 School Year", y = "Count", title = "Black Attendance in Connecticut Schools 2019-20")
+ 
+latino_attendance_20 <- attendance |>
+  filter(group == "Hispanic/Latino of any race", category == "Race/Ethnicity") |>
+  select(att20) |>
+  ggplot(mapping = aes(x = att20)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2019-20 School Year", y = "Count", title = "Hispanic/Latino Attendance in Connecticut Schools 2019-20")
+
 white_attendance_21 <- attendance |>
   filter(group == "White", category == "Race/Ethnicity") |>
   select(att21) |>
@@ -63,13 +108,96 @@ latino_attendance_21 <- attendance |>
   ggplot(mapping = aes(x = att21)) +
   geom_histogram(binwidth = .005) +
   labs(x = "Attendance in 2021 School Year", y = "Count", title = "Hispanic/Latino Attendance in Connecticut Schools 20-21")
+
+white_attendance_22 <- attendance |>
+  filter(group == "White", category == "Race/Ethnicity") |>
+  select(att22) |>
+  ggplot(mapping = aes(x = att22)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2021-22 School Year", y = "Count", title = "White Attendance in Connecticut Schools 2021-22")
+
+ black_attendance_22 <- attendance |>
+  filter(group == "Black or African American", category == "Race/Ethnicity") |>
+  select(att22) |>
+  ggplot(mapping = aes(x = att22)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2021-22 School Year", y = "Count", title = "Black Attendance in Connecticut Schools 2021-22")
+ 
+latino_attendance_22 <- attendance |>
+  filter(group == "Hispanic/Latino of any race", category == "Race/Ethnicity") |>
+  select(att22) |>
+  ggplot(mapping = aes(x = att22)) +
+  geom_histogram(binwidth = .005) +
+  labs(x = "Attendance in 2021-22 School Year", y = "Count", title = "Hispanic/Latino Attendance in Connecticut Schools 2021-22")
 ```
 
+2019-20 School Year
 
-```{r}
+```{r, echo = FALSE}
+white_attendance_20
+black_attendance_20
+latino_attendance_20
+```
+
+2020-21 School Year
+
+```{r, echo = FALSE}
 white_attendance_21
 black_attendance_21
 latino_attendance_21
 ```
 
-```{r}
+2021-22 School Year
+
+```{r, echo = FALSE}
+white_attendance_22
+black_attendance_22
+latino_attendance_22
+```
+Through these 9 plots, there are visible differences in attendance rates between White, Latino, and Black students, and it is notable that the attendance rates are higher. However, we should run a regression analysis to see if this is significant.
+
+```{r, echo = FALSE}
+
+reg21 <- lm(att21 ~ group,
+data = attendance)
+summary(reg21)
+
+var_labels <- c(
+"(Intercept)" = "Intercept",
+"groupAll Students" = "All Students",
+"category" = "Race"
+)
+
+modelsummary::modelsummary(reg21,
+                           statistic = c("s.e. = {std.error}",
+                                         "p = {p.value}"),
+                           coef_map = var_labels,
+                           gof_map = c("nobs", "r.squared", "adj.r.squared"))
+```
+
+
+After running the regression between attendance rates in 2021 and “group” (the racial indicator), we get an intercept of .946. Notably, the coefficient for Black attendance in 2021 is -0.025683, meaning that Black students had an attendance rate lower than the general attendance rate by 2.57%! Additionally, Hispanic/Latino students have a coefficient of -0.025687. Similarly, Hispanic students have a lower attendance rate in the 2021 school year. White students, however, had an attendance rate that was above the general rate. The p-value of our regression is less than .0001, so we reject the null hypothesis that race does not impact attendance rates. In other words, there is evidence that a student’s race did impact their attendance rates in Connecticut school districts over COVID-19, and my hypothesis is correct!
+
+4. Conclusion: Although I am glad that my hypothesis was supported by my findings, I am still wary to say that I am onto something. Obviously, my dataset is very flawed, and this is just an estimation of how COVID-19 actually impacted students based on their race. There are also many confounding variables at play, and I will not pretend that this data is 100% accurate either. But, in the words of George Box, “All models are wrong, some are useful.” I hope that the US government will take seriously the deep effects of COVID-19, particularly how it impacted the attendance of students of color more than it did the attendance of White students. If I had the time, I would have collected the data to make it easier to find a correlation between race and attendance because, in my opinion, this data set was very difficult to maneuver around. Nonetheless, this research project was a great way to test the waters for data science in the future!
+
+Thank you!
+- Chris Ruiz
+
+MILESTONES:
+
+MILESTONE 1: 
+
+I am interested in exploring data related to education. I volunteer at the Cambridge After School Program near Alewife and would love to see if I can collect data through surveys of the students about their thoughts on the effectiveness of the program, or really anything related to education. I don't really know how this will manifest itself, but its a good place to start and I'm excited to brainstorm!
+
+
+MILESTONE 2:
+The dataset that I will be using is called School Attendance by Student Group and District, 2021-2022. It is from data.gov. The dataset takes into account schools in the state of Connecticut (public and private) and also stores factors like race, homelessness, income level, whether or not students are on free-reduced lunch programs, school district, and attendance rates between 2019 and 2022. The general question I would like to answer is did COVID-19 impact the attendance rates of low income students and minority students, and if so, by how much, and also if so, did students of color have consistently lower attendance rates than their white counterparts? I hypothesize that COVID disproportionately impacted poorer students and students of color and that their attendance rates in the state of Connecticut will be lower across the board. I have read many articles that claim that COVID impacted the minority workforce disproportionately, so I believe that my hypothesis is rooted in logic and theory. Although I can't establish causation, I think that this may be true because students in lower income districts had worse access to vaccines, more exposure to the virus, and less school resources to contain the spread of the virus, in turn lowering their attendance rates compared to wealthier, whiter districts. The variables I plan to use are percentage of non white students, percentage of white students, attendance rates in 2019, attendance rates in 2020, attendance rates in 2021, as well as the other factors like homelessness, income, and need. If all goes well, I will establish a negative correlation between non white percentage and attendance rates. This will be measured with a correlation coefficient from -1 to 1. My hypothesis would be proven if the data, when plotted, showed a negative trend between minorities and high attendance rates. My hypothesis would be disproven if attendance rates between 2019 and 2021 were consistent, and also if attendance rates between non whites and whites were consistent. I am excited to get into the data and see what I can find!
+
+MILESTONE 3: 
+
+In this milestone, I was interested in overall attendance rates among Black and White students. I chose 2022 for this first visualization, but plan to analyze attendance impact over all 3 years that the dataset allows. It is clear that in the following graphs, black attendance rates are lower than white attendance rates across the board.
+
+MILESTONE 4: 
+
+By analyzing the attendance distributions below, there is evidence that Black and Latino students, over all Connecticut school districts, had lower attendance rates in the 2020-2021 school year. I plan to analyze a connection between COVID-19 and attendance rates to compare attendance rates both before and after COVID-19. However, with the data visualizations below, I can estimate that the mean attendance in 2021 for White students is a couple percentage points higher than their Latino and Black counterparts. I also plan to see how homelessness impacted attendance rates, but for right now, the data supports my hypothesis that COVID-19 is not colorblind and impacts communities of color differently.
+
