@@ -154,7 +154,7 @@ white_attendance_22
 black_attendance_22
 latino_attendance_22
 ```
-Through these 9 plots, there are visible differences in attendance rates between White, Latino, and Black students, and it is notable that the attendance rates are higher. However, we should run a regression analysis to see if this is significant. Here is the summary for that regression:
+Through these 9 plots, there are visible differences in attendance rates between White, Latino, and Black students, and it is notable that the attendance rates are higher among White students. For example, in 2021-22, the White distribution centered well above 90%, while the Black distribution was well below 90%. However, we should run a regression analysis to see if this is significant. Here is the summary for that regression:
 
 ```{r, echo = FALSE}
 
